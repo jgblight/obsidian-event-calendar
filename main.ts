@@ -1,5 +1,5 @@
 import { Notice, Plugin } from 'obsidian';
-import { render_calendar } from 'src/render';
+import { render_agenda } from 'src/render';
 
 // Remember to rename these classes and interfaces!
 
@@ -30,8 +30,7 @@ export default class MyPlugin extends Plugin {
 			const dv = this.app.plugins.plugins.dataview?.api;
 
 			dv?.tryQuery(source).then((query_result) => {
-				el.appendText("potato")
-				render_calendar(query_result, el, this.app);
+				const agenda = render_agenda(el, query_result);
 			});
 		});
 	}
