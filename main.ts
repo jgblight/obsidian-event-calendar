@@ -1,21 +1,21 @@
 import { Notice, Plugin } from 'obsidian';
 import { render_agenda } from 'src/render';
+import { parse_query_result } from "src/parse"
 
-// Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
-	mySetting: string;
-}
+/*
+    --faded-red: #e67e80;
+    --faded-orange: #e69875;
+    --faded-yellow: #dbbc7f;
+    --faded-green: #a7c080;
+    --faded-aqua: #83c092;
+    --faded-blue: #7fbbb3;
+    --faded-purple: #d699b6;
+*/
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class EventCalendar extends Plugin {
 
 	async onload() {
-		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Potato', (evt: MouseEvent) => {
@@ -30,20 +30,12 @@ export default class MyPlugin extends Plugin {
 			const dv = this.app.plugins.plugins.dataview?.api;
 
 			dv?.tryQuery(source).then((query_result) => {
-				const agenda = render_agenda(el, query_result);
+				render_agenda(el, parse_query_result(query_result, "#5a93a2"));
 			});
 		});
 	}
 
 	onunload() {
 
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
 	}
 }

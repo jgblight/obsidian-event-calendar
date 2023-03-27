@@ -1,15 +1,23 @@
 
-import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
 import Agenda from "./components/Agenda.svelte"
+import type { DateItem } from "./parse"
 
 
 
-export function render_agenda(container: HTMLElement, query: QueryResult) : Agenda{
-    const items = query.values.map((item) => item.value.text);
+export function render_agenda(container: HTMLElement, items: DateItem[]) : Agenda{
+    const dateMap = new Map<string, DateItem[]>;
+    for (const item of items) {
+        const day = item.date.toFormat("DDD");
+        if (!dateMap.has(day)) {
+            dateMap.set(day, [item]);
+        } else {
+            dateMap.get(day)?.push(item);
+        }
+    }
     return new Agenda({
         target: container,
         props: {
-            items
+            dateMap
         },
     })
 }

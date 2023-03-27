@@ -1,17 +1,15 @@
 <script lang="ts">
-  export let items: string;
+import ItemList from "./ItemList.svelte";
+import type { DateItem } from "../parse"
+
+  export let dateMap: Map<string, DateItem[]>;
 </script>
 
 <div class="agenda">
-  <ul>
-    {#each items as item}
-        <li>{item}</li>
+    {#each [...dateMap] as [key, value]}
+        <div>
+            <h4>{key}</h4>
+            <ItemList items={value}/>
+        </div>
     {/each}
-  </ul>
 </div>
-
-<style>
-  .number {
-    color: red;
-  }
-</style>
