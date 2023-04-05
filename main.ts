@@ -1,5 +1,5 @@
 import { Notice, Plugin } from 'obsidian';
-import { render_agenda } from 'src/render';
+import { render_calendar } from 'src/render';
 import { parse } from "src/parse"
 
 
@@ -17,17 +17,8 @@ export default class EventCalendar extends Plugin {
 
 	async onload() {
 
-		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('dice', 'Potato', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a potato!');
-		});
-		// Perform additional things with the ribbon
-		ribbonIconEl.addClass('my-plugin-ribbon-class');
-
 		this.registerMarkdownCodeBlockProcessor("calendar", (source, el, ctx) => {
-			el.appendText("potato");
-			parse(source).then((data) => (render_agenda(el, data)));
+			parse(source).then((data) => (render_calendar(el, data)));
 		});
 	}
 

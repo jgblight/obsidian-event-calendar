@@ -1,12 +1,28 @@
 import { DateTime } from "luxon";
 
-export function get_day_for_calendar_index(year: number, month: number, index: number) : DateTime|null {
+type Week = {
+    week_no : number,
+    days : Map<string, DateTime>
+};
+type MonthGrid = Week[];
+
+export function get_month_grid(year: number, month: number) : MonthGrid {
     const firstDayOfMonth = DateTime.local(year, month, 1);
-    const offset = firstDayOfMonth.weekday - 1; // -1 because luxon 1-indexes
-    const dayOfMonth = index - offset;
-    if (dayOfMonth < 1 || dayOfMonth > firstDayOfMonth.daysInMonth) {
-        return null;
-    } else {
-        return DateTime.local(year, month, dayOfMonth);
+    const month_grid = [];
+    let week = {
+        week_no: firstDayOfMonth.weekNumber,
+        days: new Map()
+    };
+    for (let i = 1; i <= firstDayOfMonth.daysInMonth; i++) {
+        const day = DateTime.local(year, month, i);
+        if (day.weekday == 1 || month_grid.length == 0) {
+            week = {
+                week_no: day.weekNumber,
+                days: new Map()
+            };
+            month_grid.push(week);
+        }
+        week.days.set(day.weekdayShort, day);
     }
+    return month_grid;
 }

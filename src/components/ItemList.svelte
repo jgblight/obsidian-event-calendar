@@ -3,9 +3,10 @@
   import type { DataSource } from "../types"
 
   export let source: DataSource;
-  export let date: string;
+  export let day: DateTime;
 
-  let items = source.dateMap.has(date) ? source.dateMap.get(date) : [];
+  let formatted = day.toFormat("DDD");
+  let items = source.dateMap.has(formatted) ? source.dateMap.get(formatted) : [];
 </script>
 
 <ul>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DateTime, Info } from "luxon";
+    import type { DateTime } from "luxon";
     import ItemList from "./ItemList.svelte";
     import type { DataSource } from "../types";
 
@@ -12,7 +12,7 @@
     <div>
         <div class="day_number">{day.day}</div>
         {#each sources as source}
-            <ItemList source={source} date={day.toFormat("DDD")} />
+            <ItemList source={source} day={day} />
         {/each}
     </div>
 {/if}
@@ -22,12 +22,11 @@
   .day {
     cursor: pointer;
     font-size: 0.8em;
-    height: 100%;
     padding: 4px;
     position: relative;
     transition: background-color 0.1s ease-in, color 0.1s ease-in;
     vertical-align: top;
-    max-width: 100px;
+    height: 100px;
     text-overflow: ellipsis;
   }
   .day:hover {
