@@ -1,6 +1,6 @@
 import { Notice, Plugin } from 'obsidian';
 import { render_agenda } from 'src/render';
-import { parse_query_result } from "src/parse"
+import { parse } from "src/parse"
 
 
 /*
@@ -26,12 +26,8 @@ export default class EventCalendar extends Plugin {
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
 
 		this.registerMarkdownCodeBlockProcessor("calendar", (source, el, ctx) => {
-
-			const dv = this.app.plugins.plugins.dataview?.api;
-
-			dv?.tryQuery(source).then((query_result) => {
-				render_agenda(el, parse_query_result(query_result, "#5a93a2"));
-			});
+			el.appendText("potato");
+			parse(source).then((data) => (render_agenda(el, data)));
 		});
 	}
 

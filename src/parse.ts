@@ -1,16 +1,23 @@
-
-import type DateTime from "luxon";
+import { DataSource } from "./types";
 import type { TableResult } from "obsidian-dataview/lib/api/plugin-api";
 
 
-export type DateItem = {
-    date: DateTime,
-    text: string,
-    path: string,
-    color: string,
+
+const colors = ["#e67e80", "#e69875", "#dbbc7f", "#a7c080", "#83c092", "#7fbbb3", "#d699b6"];
+
+export async function parse(source : string) : Promise<DataSource[]> {
+    let results : DataSource[] = [];
+    const queries = source.split('---');
+    for (let i = 0; i < queries.length; i++) {
+        const query = queries[i];
+        const dv = this.app.plugins.plugins.dataview?.api;
+        const data_source = await dv?.tryQuery(query).then((query_result) => {return parse_query_result(query_result, colors[i])});
+        results.push(data_source);
+    }
+    return results;
 }
 
-export function parse_query_result(query: TableResult, color: string) : DateItem[] {
+export function parse_query_result(query: TableResult, color: string) : DataSource {
     const headers = query.headers;
     if (!headers.contains("date")) {
         throw new Error("Query must contain a 'date' column");
@@ -18,7 +25,7 @@ export function parse_query_result(query: TableResult, color: string) : DateItem
     if (!headers.contains("text")) {
         throw new Error("Query must contain a 'text' column");
     }
-    return query.values.map((item_list) => {
+    const data = query.values.map((item_list) => {
         const file_object : any = item_list[0];
         const item_dict : { [key: string]: any } = {}
         for (let i = 0; i < item_list.length; i++) {
@@ -32,4 +39,5 @@ export function parse_query_result(query: TableResult, color: string) : DateItem
         "path": item.file.path, 
         "color": color
     }));
+    return new DataSource(data, color);
 }

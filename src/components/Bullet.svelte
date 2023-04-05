@@ -19,8 +19,8 @@
 <style>
   .dot {
     display: inline-block;
-    height: var(--font-text-size);
-    width: var(--font-text-size);
+    height: 12px;
+    width: 12px;
     margin: 1px;
     vertical-align: text-top;
   }
