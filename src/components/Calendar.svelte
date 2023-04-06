@@ -1,13 +1,11 @@
 <script lang="ts">
+    import { debounce } from "obsidian";
     import { DateTime, Info } from "luxon";
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
-    import ItemList from "./ItemList.svelte";
-    import Popover from "./Popover.svelte";
     import type { DataSource } from "../types";
     import { get_month_grid } from "../date_utils";
-    import { writable } from "svelte/store";
-	import HoverBox from "./HoverBox.svelte";
+	  import HoverBox from "./HoverBox.svelte";
 
     export let sources: DataSource[];
     export let today: DateTime;
@@ -17,6 +15,7 @@
     let selectedDay = today;
     let referenceElement : HTMLElement|null;
     let popoverVisible = false;
+    let popoverTimeout : number;
 
     function prev_month() {
       month = month - 1;
@@ -35,15 +34,38 @@
     }
 
     function hoverDay(event : CustomEvent) {
-		  selectedDay = event.detail.day;
-      referenceElement = event.detail.element;
+      // Track the day that the user is currently hovering over
+      // If same day is hover for more than the timeout period, open the popover
+      const eventElement = event.detail.element;
+
+      if (eventElement !== referenceElement) {
+        selectedDay = event.detail.day;
+        referenceElement = eventElement;
+      }
+
+      if (!popoverVisible) {
+        window.clearTimeout(popoverTimeout);
+        popoverTimeout = window.setTimeout(() => {
+          if (referenceElement === eventElement) {
+            popoverVisible = true;
+          }
+        }, 750);
+      }
       popoverVisible = true;
 	  }
 
-    function dismissPopover(event : CustomEvent) {
-      referenceElement = null;
-      popoverVisible = false;
-    }
+    const dismissPopover = debounce(
+      (event: CustomEvent) => {
+        // if the user didn't hover onto another day
+        if (referenceElement === event.detail.element) {
+          referenceElement = null;
+          popoverVisible = false;
+        }
+      },
+      750,
+      true
+    );
+
 </script>
 
 <div id="calendar-container" class="container">
