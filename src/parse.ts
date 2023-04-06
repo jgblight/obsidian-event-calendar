@@ -6,7 +6,7 @@ import type { TableResult } from "obsidian-dataview/lib/api/plugin-api";
 const colors = ["#e67e80", "#e69875", "#dbbc7f", "#a7c080", "#83c092", "#7fbbb3", "#d699b6"];
 
 export async function parse(source : string) : Promise<DataSource[]> {
-    let results : DataSource[] = [];
+    const results : DataSource[] = [];
     const queries = source.split('---');
     for (let i = 0; i < queries.length; i++) {
         const query = queries[i];

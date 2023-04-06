@@ -1,17 +1,18 @@
 <script lang="ts">
+  import type { DateTime } from "luxon";
   import Bullet from "./Bullet.svelte";
-  import type { DataSource } from "../types"
+  import type { DataSource} from "../types"
 
-  export let source: DataSource;
+  export let sources: DataSource[];
   export let day: DateTime;
-
-  let formatted = day.toFormat("DDD");
-  let items = source.dateMap.has(formatted) ? source.dateMap.get(formatted) : [];
+  
 </script>
 
 <ul>
-  {#each items as item}
-      <li><Bullet color={source.color} /> {item.text}</li>
+  {#each sources as source}
+    {#each source.get_day(day) as item}
+        <li><Bullet color={source.color} /> {item.text}</li>
+    {/each}
   {/each}
 </ul>
 

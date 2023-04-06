@@ -2,13 +2,21 @@
     import { DateTime, Info } from "luxon";
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
+    import ItemList from "./ItemList.svelte";
+    import Popover from "./Popover.svelte";
     import type { DataSource } from "../types";
     import { get_month_grid } from "../date_utils";
+    import { writable } from "svelte/store";
+	import HoverBox from "./HoverBox.svelte";
 
     export let sources: DataSource[];
     export let today: DateTime;
     let year = today.year;
     let month = today.month;
+
+    let selectedDay = today;
+    let referenceElement : HTMLElement|null;
+    let popoverVisible = false;
 
     function prev_month() {
       month = month - 1;
@@ -24,6 +32,17 @@
         year = year + 1;
         month = 1;
       }
+    }
+
+    function hoverDay(event : CustomEvent) {
+		  selectedDay = event.detail.day;
+      referenceElement = event.detail.element;
+      popoverVisible = true;
+	  }
+
+    function dismissPopover(event : CustomEvent) {
+      referenceElement = null;
+      popoverVisible = false;
     }
 </script>
 
@@ -48,12 +67,15 @@
       {#each get_month_grid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} sources={sources} />
+            <Day day={week.days.has(d) ? week.days.get(d) : null} sources={sources} on:hoverDay={hoverDay} on:endHover={dismissPopover}/>
           {/each} 
         </tr>
       {/each}
     </tbody>
   </table>
+</div>
+<div>
+  <HoverBox referenceElement={referenceElement} sources={sources} day={selectedDay} visible={popoverVisible} />
 </div>
 
 <style>
@@ -96,5 +118,5 @@
     display: inline;
     box-shadow: none;
     color: var(--text-muted);
-}
+  }
 </style>

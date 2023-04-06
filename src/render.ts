@@ -1,6 +1,5 @@
 
 import { DateTime } from "luxon";
-import Agenda from "./components/Agenda.svelte";
 import Calendar from "./components/Calendar.svelte";
 import type { DataSource } from "./types";
 

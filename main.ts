@@ -1,4 +1,4 @@
-import { Notice, Plugin } from 'obsidian';
+import { Plugin } from 'obsidian';
 import { render_calendar } from 'src/render';
 import { parse } from "src/parse"
 

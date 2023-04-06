@@ -23,4 +23,9 @@ export class DataSource {
             }
         }
     }
+
+    get_day(day: DateTime) : DateItem[] {
+        const formatted = day.toFormat("DDD");
+        return this.dateMap.get(formatted) ?? [];
+    }
 }
