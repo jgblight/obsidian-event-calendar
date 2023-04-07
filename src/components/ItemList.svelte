@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { DateTime } from "luxon";
   import Bullet from "./Bullet.svelte";
-  import type { DataSource} from "../types"
+  import type { DataSource } from "../types"
 
   export let sources: DataSource[];
   export let day: DateTime;

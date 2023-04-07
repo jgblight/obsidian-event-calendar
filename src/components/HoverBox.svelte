@@ -2,15 +2,13 @@
 import ItemList from "./ItemList.svelte";
 import Popover from "./Popover.svelte";
 import type { DataSource } from "../types";
-import { DateTime, Info } from "luxon";
+import type { DateTime } from "luxon";
 
-export let referenceElement : HTMLElement;
+export let referenceElement : HTMLElement|null;
 export let visible : boolean;
 export let sources : DataSource[];
 export let day : DateTime;
-
 </script>
-
 
 <Popover
   referenceElement={referenceElement}

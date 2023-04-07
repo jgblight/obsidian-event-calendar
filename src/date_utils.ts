@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { finishRenderMath } from "obsidian";
 
 type Week = {
     week_no : number,
@@ -13,7 +14,11 @@ export function get_month_grid(year: number, month: number) : MonthGrid {
         week_no: firstDayOfMonth.weekNumber,
         days: new Map()
     };
-    for (let i = 1; i <= firstDayOfMonth.daysInMonth; i++) {
+    const daysInMonth = firstDayOfMonth.daysInMonth;
+    if (daysInMonth === undefined) {
+        throw new Error("Invalid month");
+    }
+    for (let i = 1; i <= daysInMonth; i++) {
         const day = DateTime.local(year, month, i);
         if (day.weekday == 1 || month_grid.length == 0) {
             week = {

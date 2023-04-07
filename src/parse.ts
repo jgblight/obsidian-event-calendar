@@ -1,9 +1,15 @@
 import { DataSource } from "./types";
-import type { TableResult } from "obsidian-dataview/lib/api/plugin-api";
+import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
 
+const red = "#e67e80";
+const orange = "#e69875";
+const yellow = "#dbbc7f";
+const green = "#a7c080";
+const aqua = "#83c092";
+const blue = "#7fbbb3";
+const purple = "#d699b6";
 
-
-const colors = ["#e67e80", "#e69875", "#dbbc7f", "#a7c080", "#83c092", "#7fbbb3", "#d699b6"];
+const colors = [blue, red, yellow, aqua, purple, orange, green];
 
 export async function parse(source : string) : Promise<DataSource[]> {
     const results : DataSource[] = [];
@@ -11,13 +17,16 @@ export async function parse(source : string) : Promise<DataSource[]> {
     for (let i = 0; i < queries.length; i++) {
         const query = queries[i];
         const dv = this.app.plugins.plugins.dataview?.api;
-        const data_source = await dv?.tryQuery(query).then((query_result) => {return parse_query_result(query_result, colors[i])});
+        const data_source = await dv?.tryQuery(query).then((query_result : QueryResult) => {return parse_query_result(query_result, colors[i])});
         results.push(data_source);
     }
     return results;
 }
 
-export function parse_query_result(query: TableResult, color: string) : DataSource {
+export function parse_query_result(query: QueryResult, color: string) : DataSource {
+    if (query.type != "table") {
+        throw new Error("Queries must be of type TABLE")
+    }
     const headers = query.headers;
     if (!headers.contains("date")) {
         throw new Error("Query must contain a 'date' column");
