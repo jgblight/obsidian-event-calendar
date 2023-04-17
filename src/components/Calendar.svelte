@@ -1,16 +1,25 @@
 <script lang="ts">
+  import { DateTime, Info } from "luxon";
     import { debounce } from "obsidian";
-    import { DateTime, Info } from "luxon";
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
+	  import HoverBox from "./HoverBox.svelte";
     import type { DataSource } from "../types";
     import { get_month_grid } from "../date_utils";
-	  import HoverBox from "./HoverBox.svelte";
+    import { parse } from "../parse";
 
-    export let sources: DataSource[];
+    export let source_str: string;
     export let today: DateTime;
     let year = today.year;
     let month = today.month;
+
+    let sources : DataSource[] = [];
+    parse(source_str).map((promise) => {
+      promise.then((source) => {
+        sources.push(source);
+        sources = sources;  // assignment triggers render
+      });
+    });
 
     let selectedDay = today;
     let referenceElement : HTMLElement|null;

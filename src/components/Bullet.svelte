@@ -1,10 +1,14 @@
 <script lang="ts">
+	import type internal from "stream";
+
+
   export let color: string;
+  export let size: number;
 </script>
 
 <svg
   class="dot"
-  style="color:{color}"
+  style="color:{color}; height:{size}px; width:{size}px;"
   viewBox="0 0 6 6"
   xmlns="http://www.w3.org/2000/svg"
 >
@@ -19,8 +23,6 @@
 <style>
   .dot {
     display: inline-block;
-    height: 12px;
-    width: 12px;
     margin: 1px;
     vertical-align: text-top;
   }

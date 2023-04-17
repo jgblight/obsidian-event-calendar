@@ -1,20 +1,33 @@
 <script lang="ts">
     import ItemList from "./ItemList.svelte";
-    import type { DataSource } from "../types"
+    import { DateTime, Duration } from "luxon";
+    import type { DataSource } from "../types";
+    import { parse } from "../parse";
 
-    export let sources: DataSource[];
-    let key_set = new Set();
-    sources.forEach(source => [...source.dateMap.keys()].forEach(day => key_set.add(day)));
-    console.log(key_set);
+    export let source_str: string;
+    export let today: DateTime;
+
+    let sources : DataSource[] = [];
+    parse(source_str).map((promise) => {
+      promise.then((source) => {
+        sources.push(source);
+        sources = sources;  // assignment triggers render
+      });
+    });
+    let days = [...Array(7).keys()].map(d => today.plus(Duration.fromObject({days:d})));
 </script>
 
 <div class="agenda">
-    {#each [...key_set] as key}
+    {#each days as day}
         <div>
-            <h4>{key}</h4>
-            {#each sources as source}
-                <ItemList source={source} date={key} />
-            {/each}
+            <h5>{day.toFormat("DDD")}</h5>
+            <ItemList sources={sources} day={day} />
         </div>
     {/each}
 </div>
+
+<style>
+    h5 {
+        margin-bottom: 0;
+    }
+</style>

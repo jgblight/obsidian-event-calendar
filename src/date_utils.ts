@@ -1,5 +1,4 @@
 import { DateTime } from "luxon";
-import { finishRenderMath } from "obsidian";
 
 type Week = {
     week_no : number,

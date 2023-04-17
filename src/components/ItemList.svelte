@@ -5,13 +5,14 @@
 
   export let sources: DataSource[];
   export let day: DateTime;
+  export let isCalendar: boolean = false;
   
 </script>
 
-<ul>
+<ul class={isCalendar ? "calendar" : "agenda"}>
   {#each sources as source}
     {#each source.get_day(day) as item}
-        <li><Bullet color={source.color} /> {item.text}</li>
+        <li><Bullet color={source.color} size={isCalendar ? 12 : 16}/> {item.text}</li>
     {/each}
   {/each}
 </ul>
@@ -20,6 +21,8 @@
   ul {
     list-style: none; /* Remove default bullets */
     margin: 0;
+  }
+  .calendar {
     padding-inline-start: 0px;
   }
   ul li {

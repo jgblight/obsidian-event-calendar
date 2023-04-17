@@ -11,13 +11,13 @@ const purple = "#d699b6";
 
 const colors = [blue, red, yellow, aqua, purple, orange, green];
 
-export async function parse(source : string) : Promise<DataSource[]> {
-    const results : DataSource[] = [];
+export function parse(source : string) : Promise<DataSource>[] {
+    const results : Promise<DataSource>[] = [];
     const queries = source.split('---');
     for (let i = 0; i < queries.length; i++) {
         const query = queries[i];
         const dv = this.app.plugins.plugins.dataview?.api;
-        const data_source = await dv?.tryQuery(query).then((query_result : QueryResult) => {return parse_query_result(query_result, colors[i])});
+        const data_source = dv?.tryQuery(query).then((query_result : QueryResult) => {return parse_query_result(query_result, colors[i])});
         results.push(data_source);
     }
     return results;
