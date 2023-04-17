@@ -10,7 +10,7 @@ export default class EventCalendar extends Plugin {
 			}
 		);
 		this.registerMarkdownCodeBlockProcessor("agenda", (source, el, ctx) => {
-			render_agenda(el, source);
+			render_agenda(el, source, this.app);
 		});
 	}
 

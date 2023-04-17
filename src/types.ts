@@ -4,7 +4,6 @@ export type DateItem = {
 	date: DateTime;
 	text: string;
 	path: string;
-	color: string;
 };
 
 export class DataSource {

@@ -37,7 +37,7 @@
 {#if day}
     <div on:pointerenter={hoverDay} on:focus={hoverDay} on:pointerleave={endHover} bind:this={referenceElement} class="content">
         <div class="day_number">{day.day}</div>
-        <ItemList sources={sources} day={day} isCalendar={true}/>
+        <ItemList sources={sources} day={day} small={true}/>
     </div>
 {/if}
 </td>
