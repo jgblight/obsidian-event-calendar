@@ -1,7 +1,8 @@
 <script>
-    import Portal from "svelte-portal/src/Portal.svelte";
-    import { createPopper, popper } from '@popperjs/core';
+    import { createPopper } from '@popperjs/core';
 	import { afterUpdate, onDestroy } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
+
     export let isVisible;
     export let referenceElement;
     let popperElement;
@@ -15,6 +16,11 @@
         ],
         placement: "right",
     };
+
+    const dispatch = createEventDispatcher();
+
+    function onEnter() {dispatch("enterPopover")}
+    function onExit() {dispatch("exitPopover")}
 
 	afterUpdate(() => {
         if (referenceElement != previousReference) {
@@ -42,8 +48,9 @@
 
     <div
         class="popper"
-        class:visible={!!referenceElement && isVisible}
+        class:visible={isVisible}
         bind:this={popperElement}
+        on:pointerenter={onEnter} on:pointerleave={onExit}
     >
         <slot />
     </div>
@@ -53,7 +60,6 @@
 .popper {
     transition: opacity 0.1s ease-in;
     opacity: 0;
-    pointer-events: none;
     position: absolute;
     z-index: var(--layer-popover);
 }

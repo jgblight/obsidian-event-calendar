@@ -4,7 +4,7 @@
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
 	  import HoverBox from "./HoverBox.svelte";
-    import type { DataSourceCollection } from "../types";
+    import type { DataSourceCollection, DateElement } from "../types";
     import { get_month_grid } from "../date_utils";
 
     export let collection: DataSourceCollection;
@@ -31,42 +31,50 @@
     }
 
     // Track popover state
-    let selectedDay = today;
-    let referenceElement : HTMLElement|null;
-    let popoverVisible = false;
+    let activeDateElement : DateElement|null = null;
+    let popoverVisible : boolean = false;
     let popoverTimeout : number;
+    let pointerInPopover : boolean = false;
 
     function hoverDay(event : CustomEvent) {
+      console.log({event: "enter", day: event.detail});
       // Track the day that the user is currently hovering over
       // If same day is hover for more than the timeout period, open the popover
-      const eventElement = event.detail.element;
+      const eventElement = event.detail;
 
-      if (eventElement !== referenceElement) {
-        selectedDay = event.detail.day;
-        referenceElement = eventElement;
+      if (eventElement !== activeDateElement) {
+        activeDateElement = eventElement;
       }
 
       if (!popoverVisible) {
         window.clearTimeout(popoverTimeout);
         popoverTimeout = window.setTimeout(() => {
-          if (referenceElement === eventElement) {
+          if (activeDateElement === eventElement) {
             popoverVisible = true;
           }
+          console.log({event: "enter", activeDateElement, popoverVisible, });
         }, 250);
       }
+      console.log({event: "enter", activeDateElement, popoverVisible, });
 	  }
 
     const dismissPopover = debounce(
-      (event: CustomEvent) => {
+      (dateElement: DateElement) => {
+        console.log({event: "exit", day: dateElement});
         // if the user didn't hover onto another day
-        if (referenceElement === event.detail.element) {
-          referenceElement = null;
+        if (activeDateElement === dateElement && !pointerInPopover) {
+          activeDateElement = null;
           popoverVisible = false;
         }
       },
       750,
       true
     );
+
+    function exitPopover() {
+      pointerInPopover = false;
+      if (activeDateElement) { dismissPopover(activeDateElement)}
+    }
 
 </script>
 
@@ -91,14 +99,14 @@
       {#each get_month_grid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={dismissPopover}/>
+            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={(event) => dismissPopover(event.detail)}/>
           {/each} 
         </tr>
       {/each}
     </tbody>
   </table>
 </div>
-<HoverBox referenceElement={referenceElement} collection={collection} day={selectedDay} visible={popoverVisible}/>
+<HoverBox collection={collection} activeDateElement={activeDateElement} visible={popoverVisible} on:enterPopover={() => {pointerInPopover = true}} on:exitPopover={exitPopover}/>
 
 
 <style>

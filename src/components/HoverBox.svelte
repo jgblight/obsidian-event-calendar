@@ -1,23 +1,27 @@
 <script lang="ts">
 import ItemList from "./ItemList.svelte";
 import Popover from "./Popover.svelte";
-import type { DataSourceCollection } from "../types";
+import type { DataSourceCollection, DateElement } from "../types";
 import type { DateTime } from "luxon";
+	import { element } from "svelte/internal";
 
-export let referenceElement : HTMLElement|null;
+export let activeDateElement : DateElement|null;
 export let visible : boolean;
 export let collection: DataSourceCollection;
-export let day : DateTime;
 </script>
 
 <Popover
-  referenceElement={referenceElement}
-  isVisible={visible}
+referenceElement={activeDateElement?.element}
+isVisible={visible}
+on:enterPopover on:exitPopover
 >
-  <div class="popover">
-    <ItemList collection={collection} day={day} />
-  </div>
+<div class="popover">
+  {#if activeDateElement}
+    <ItemList collection={collection} day={activeDateElement.date} />
+  {/if}
+</div>
 </Popover>
+
 
 <style>
   .popover {

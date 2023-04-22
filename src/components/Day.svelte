@@ -17,7 +17,7 @@
     function hoverDay() {
       if (has_data) {
         dispatch('hoverDay', {
-          day: day,
+          date: day,
           element: referenceElement
         });
       }
@@ -26,7 +26,7 @@
     function endHover() {
       if (has_data) {
         dispatch('endHover', {
-          day: day,
+          date: day,
           element: referenceElement
         });
       }

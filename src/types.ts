@@ -45,7 +45,6 @@ export class DataSource {
 
 	get_day(day: DateTime): DateItem[] {
 		const formatted = day.toFormat("DDD");
-		console.log(this.dateMap.get(formatted) ?? []);
 		return this.dateMap.get(formatted) ?? [];
 	}
 }
@@ -82,3 +81,8 @@ export class DataSourceCollection {
 		leaf.openFile(file, { active: true });
 	}
 }
+
+export type DateElement = {
+	date: DateTime;
+	element: HTMLElement;
+};
