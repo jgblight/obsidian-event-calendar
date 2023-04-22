@@ -58,9 +58,9 @@ export function parse_query_result(
 		.filter((item) => item.date != undefined)
 		.map((item) => ({
 			date: item.date,
+			until: item.until,
 			text: stripRegex(item.text, removeRegex),
 			path: item.file.path,
-			color: color,
 		}));
 	return new DataSource(data, color);
 }

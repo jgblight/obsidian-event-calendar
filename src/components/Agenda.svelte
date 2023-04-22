@@ -1,14 +1,15 @@
 <script lang="ts">
     import ItemList from "./ItemList.svelte";
-    import { DateTime, Duration } from "luxon";
+    import type { DateTime } from "luxon";
     import type { DataSource } from "../types";
     import type { App } from "obsidian";
+	import { getNextNDays } from "src/date_utils";
 
     export let sources: DataSource[];
     export let today: DateTime;
     export let app: App;
 
-    let days = [...Array(7).keys()].map(d => today.plus(Duration.fromObject({days:d})));
+    let days = getNextNDays(today, 7);
 
     function onHoverListItem(event : CustomEvent) {
         const eventItem = event.detail.item;

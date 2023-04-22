@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 
 type Week = {
 	week_no: number;
@@ -29,4 +29,20 @@ export function get_month_grid(year: number, month: number): MonthGrid {
 		week.days.set(day.weekdayShort, day);
 	}
 	return month_grid;
+}
+
+export function getNextNDays(startDate: DateTime, numDays: number): DateTime[] {
+	const days = [];
+	for (let i = 0; i < numDays; i++) {
+		days.push(startDate.plus(Duration.fromObject({ days: i })));
+	}
+	return days;
+}
+
+export function getDaysUntil(
+	startDate: DateTime,
+	endDate: DateTime
+): DateTime[] {
+	const diff = endDate.diff(startDate).shiftTo("days");
+	return getNextNDays(startDate, diff.days + 1);
 }
