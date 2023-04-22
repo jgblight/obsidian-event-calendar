@@ -1,12 +1,12 @@
 <script lang="ts">
 import ItemList from "./ItemList.svelte";
 import Popover from "./Popover.svelte";
-import type { DataSource } from "../types";
+import type { DataSourceCollection } from "../types";
 import type { DateTime } from "luxon";
 
 export let referenceElement : HTMLElement|null;
 export let visible : boolean;
-export let sources : DataSource[];
+export let collection: DataSourceCollection;
 export let day : DateTime;
 </script>
 
@@ -15,7 +15,7 @@ export let day : DateTime;
   isVisible={visible}
 >
   <div class="popover">
-    <ItemList sources={sources} day={day} />
+    <ItemList collection={collection} day={day} />
   </div>
 </Popover>
 

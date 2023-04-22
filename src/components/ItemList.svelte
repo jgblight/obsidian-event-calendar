@@ -1,35 +1,33 @@
 <script lang="ts">
   import type { DateTime } from "luxon";
   import Bullet from "./Bullet.svelte";
-  import type { DataSource, DateItem } from "../types"
-  import { createEventDispatcher } from "svelte";
+  import type { DataSourceCollection, DateItem } from "../types";
 
-  export let sources: DataSource[];
+  export let collection: DataSourceCollection;
   export let day: DateTime;
   export let indent : boolean = false;
   export let small : boolean = false;
-  
-  const dispatch = createEventDispatcher();
 
   function onClick(item: DateItem) {
-      dispatch('clickListItem', {
-        item: item
-      });
+    collection.clickItem(item);
   }
 
   function onHover(item: DateItem, element: HTMLElement) {
-      dispatch('hoverListItem', {
-        item: item,
-        element: element
-      });
+    collection.hoverItem(item, element);
   }
 
 </script>
 
 <ul class={indent ? "" : "indent"}>
-  {#each sources as source}
+  {#each collection.sources as source}
     {#each source.get_day(day) as item}
-        <li><Bullet color={source.color} size={small ? 12 : 16}/> <span  on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>{item.text}</span></li>
+        <li>
+          <Bullet color={source.color} size={small ? 12 : 16} /> 
+          {item.text} 
+          {#if !small}
+            <span class="link" on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>({item.displayText()})</span>
+          {/if}
+        </li>
     {/each}
   {/each}
 </ul>
@@ -46,5 +44,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .link {
+    cursor: pointer;
+    color: var(--text-link);
   }
 </style>

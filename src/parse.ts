@@ -1,4 +1,4 @@
-import { DataSource } from "./types";
+import { DataSource, DateItem } from "./types";
 import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
 
 const red = "#e67e80";
@@ -47,21 +47,24 @@ export function parse_query_result(
 	}
 	const data = query.values
 		.map((item_list) => {
-			const file_object: any = item_list[0];
+			const file_link: any = item_list[0];
 			const item_dict: { [key: string]: any } = {};
 			for (let i = 0; i < item_list.length; i++) {
 				item_dict[headers[i]] = item_list[i];
 			}
-			item_dict["file"] = file_object;
+			item_dict["file"] = file_link;
 			return item_dict;
 		})
 		.filter((item) => item.date != undefined)
-		.map((item) => ({
-			date: item.date,
-			until: item.until,
-			text: stripRegex(item.text, removeRegex),
-			path: item.file.path,
-		}));
+		.map(
+			(item) =>
+				new DateItem(
+					item.date,
+					stripRegex(item.text, removeRegex),
+					item.file,
+					item.until
+				)
+		);
 	return new DataSource(data, color);
 }
 

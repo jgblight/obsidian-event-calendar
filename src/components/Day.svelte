@@ -1,16 +1,16 @@
 <script lang="ts">
     import type { DateTime } from "luxon";
     import ItemList from "./ItemList.svelte";
-    import type { DataSource } from "../types";
+    import type { DataSourceCollection } from "../types";
     import { createEventDispatcher } from 'svelte';
 
     export let day: DateTime|null;
-    export let sources: DataSource[];
+    export let collection: DataSourceCollection;
 
     let referenceElement : HTMLElement;
 
     let has_data : boolean = false;
-    $: has_data = !!day && sources.some((s) => s.get_day(day).length >= 1)
+    $: has_data = !!day && collection.dayHasData(day)
 
     const dispatch = createEventDispatcher();
 
@@ -37,7 +37,7 @@
 {#if day}
     <div on:pointerenter={hoverDay} on:focus={hoverDay} on:pointerleave={endHover} bind:this={referenceElement} class="content">
         <div class="day_number">{day.day}</div>
-        <ItemList sources={sources} day={day} small={true}/>
+        <ItemList collection={collection} day={day} small={true}/>
     </div>
 {/if}
 </td>

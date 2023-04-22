@@ -4,10 +4,10 @@
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
 	  import HoverBox from "./HoverBox.svelte";
-    import type { DataSource } from "../types";
+    import type { DataSourceCollection } from "../types";
     import { get_month_grid } from "../date_utils";
 
-    export let sources: DataSource[];
+    export let collection: DataSourceCollection;
     export let today: DateTime;
 
     // Track currently visible month
@@ -91,14 +91,14 @@
       {#each get_month_grid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} sources={sources} on:hoverDay={hoverDay} on:endHover={dismissPopover}/>
+            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={dismissPopover}/>
           {/each} 
         </tr>
       {/each}
     </tbody>
   </table>
 </div>
-<HoverBox referenceElement={referenceElement} sources={sources} day={selectedDay} visible={popoverVisible}/>
+<HoverBox referenceElement={referenceElement} collection={collection} day={selectedDay} visible={popoverVisible}/>
 
 
 <style>

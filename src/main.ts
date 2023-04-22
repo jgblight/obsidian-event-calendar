@@ -4,6 +4,7 @@ import { parse } from "./parse";
 import Agenda from "./components/Agenda.svelte";
 import Calendar from "./components/Calendar.svelte";
 import { CalendarSettingTab } from "./settings";
+import { DataSourceCollection } from "./types";
 
 interface CalendarSettings {
 	removeRegex: string[];
@@ -23,10 +24,11 @@ export default class EventCalendar extends Plugin {
 		const calendar = this.registerMarkdownCodeBlockProcessor(
 			"calendar",
 			async (source, el, ctx) => {
+				const sources = await parse(source, this.settings.removeRegex);
 				return new Calendar({
 					target: el,
 					props: {
-						sources: await parse(source, this.settings.removeRegex),
+						collection: new DataSourceCollection(sources, this.app),
 						today: DateTime.local(),
 					},
 				});
@@ -37,11 +39,11 @@ export default class EventCalendar extends Plugin {
 		const agenda = this.registerMarkdownCodeBlockProcessor(
 			"agenda",
 			async (source, el, ctx) => {
+				const sources = await parse(source, this.settings.removeRegex);
 				return new Agenda({
 					target: el,
 					props: {
-						sources: await parse(source, this.settings.removeRegex),
-						app: this.app,
+						collection: new DataSourceCollection(sources, this.app),
 						today: DateTime.local(),
 					},
 				});
