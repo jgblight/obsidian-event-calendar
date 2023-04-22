@@ -2,24 +2,11 @@
     import ItemList from "./ItemList.svelte";
     import { DateTime, Duration } from "luxon";
     import type { DataSource } from "../types";
-    import { parse } from "../parse";
     import type { App } from "obsidian";
-	import { onMount } from "svelte";
 
-    export let source_str: string;
+    export let sources: DataSource[];
     export let today: DateTime;
     export let app: App;
-
-    let sources : DataSource[] = [];
-
-    onMount(async () => {
-        parse(source_str).map((promise) => {
-            promise.then((source) => {
-                sources.push(source);
-                sources = sources;  // assignment triggers render
-            });
-        });
-    });
 
     let days = [...Array(7).keys()].map(d => today.plus(Duration.fromObject({days:d})));
 

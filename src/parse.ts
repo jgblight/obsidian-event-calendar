@@ -11,7 +11,10 @@ const purple = "#d699b6";
 
 const colors = [blue, red, yellow, aqua, purple, orange, green];
 
-export function parse(source: string): Promise<DataSource>[] {
+export async function parse(
+	source: string,
+	removeRegex: string[]
+): Promise<DataSource[]> {
 	const results: Promise<DataSource>[] = [];
 	const queries = source.split("---");
 	for (let i = 0; i < queries.length; i++) {
@@ -20,16 +23,17 @@ export function parse(source: string): Promise<DataSource>[] {
 		const data_source = dv
 			?.tryQuery(query)
 			.then((query_result: QueryResult) => {
-				return parse_query_result(query_result, colors[i]);
+				return parse_query_result(query_result, colors[i], removeRegex);
 			});
 		results.push(data_source);
 	}
-	return results;
+	return Promise.all(results);
 }
 
 export function parse_query_result(
 	query: QueryResult,
-	color: string
+	color: string,
+	removeRegex: string[]
 ): DataSource {
 	if (query.type != "table") {
 		throw new Error("Queries must be of type TABLE");
@@ -54,9 +58,16 @@ export function parse_query_result(
 		.filter((item) => item.date != undefined)
 		.map((item) => ({
 			date: item.date,
-			text: item.text,
+			text: stripRegex(item.text, removeRegex),
 			path: item.file.path,
 			color: color,
 		}));
 	return new DataSource(data, color);
+}
+
+function stripRegex(text: string, removeRegex: string[]): string {
+	return removeRegex.reduce(
+		(input, re) => input.replace(new RegExp(re), ""),
+		text
+	);
 }

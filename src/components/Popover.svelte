@@ -16,14 +16,6 @@
         placement: "right",
     };
 
-    $: {
-        if (!!popperElement) {
-            console.log(popperElement);
-            popperElement.addEventListener("click", (event) => {console.log(event)});
-            console.log("created listener");
-        }
-    }
-
 	afterUpdate(() => {
         if (referenceElement != previousReference) {
             if (!!popperInstance) {
@@ -61,6 +53,7 @@
 .popper {
     transition: opacity 0.1s ease-in;
     opacity: 0;
+    pointer-events: none;
     position: absolute;
     z-index: var(--layer-popover);
 }

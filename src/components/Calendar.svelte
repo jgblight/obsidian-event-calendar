@@ -6,23 +6,9 @@
 	  import HoverBox from "./HoverBox.svelte";
     import type { DataSource } from "../types";
     import { get_month_grid } from "../date_utils";
-    import { parse } from "../parse";
-    import { onMount } from "svelte";
 
-    export let source_str: string;
+    export let sources: DataSource[];
     export let today: DateTime;
-
-    let sources : DataSource[] = [];
-
-    onMount(async () => {
-        parse(source_str).map((promise) => {
-            promise.then((source) => {
-                sources.push(source);
-                sources = sources;  // assignment triggers render
-            });
-        });
-    });
-
 
     // Track currently visible month
     let year = today.year;
