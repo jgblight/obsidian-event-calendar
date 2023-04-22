@@ -7,24 +7,26 @@
     import type { DataSource } from "../types";
     import { get_month_grid } from "../date_utils";
     import { parse } from "../parse";
+    import { onMount } from "svelte";
 
     export let source_str: string;
     export let today: DateTime;
-    let year = today.year;
-    let month = today.month;
 
     let sources : DataSource[] = [];
-    parse(source_str).map((promise) => {
-      promise.then((source) => {
-        sources.push(source);
-        sources = sources;  // assignment triggers render
-      });
+
+    onMount(async () => {
+        parse(source_str).map((promise) => {
+            promise.then((source) => {
+                sources.push(source);
+                sources = sources;  // assignment triggers render
+            });
+        });
     });
 
-    let selectedDay = today;
-    let referenceElement : HTMLElement|null;
-    let popoverVisible = false;
-    let popoverTimeout : number;
+
+    // Track currently visible month
+    let year = today.year;
+    let month = today.month;
 
     function prev_month() {
       month = month - 1;
@@ -42,6 +44,12 @@
       }
     }
 
+    // Track popover state
+    let selectedDay = today;
+    let referenceElement : HTMLElement|null;
+    let popoverVisible = false;
+    let popoverTimeout : number;
+
     function hoverDay(event : CustomEvent) {
       // Track the day that the user is currently hovering over
       // If same day is hover for more than the timeout period, open the popover
@@ -58,9 +66,8 @@
           if (referenceElement === eventElement) {
             popoverVisible = true;
           }
-        }, 750);
+        }, 250);
       }
-      popoverVisible = true;
 	  }
 
     const dismissPopover = debounce(
@@ -105,9 +112,8 @@
     </tbody>
   </table>
 </div>
-<div>
-  <HoverBox referenceElement={referenceElement} sources={sources} day={selectedDay} visible={popoverVisible} />
-</div>
+<HoverBox referenceElement={referenceElement} sources={sources} day={selectedDay} visible={popoverVisible}/>
+
 
 <style>
   .container {

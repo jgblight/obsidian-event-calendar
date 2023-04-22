@@ -1,7 +1,4 @@
 <script lang="ts">
-	import type internal from "stream";
-
-
   export let color: string;
   export let size: number;
 </script>

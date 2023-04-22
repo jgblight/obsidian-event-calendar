@@ -1,7 +1,7 @@
 <script>
     import Portal from "svelte-portal/src/Portal.svelte";
-    import { createPopper } from '@popperjs/core';
-	import { afterUpdate } from 'svelte';
+    import { createPopper, popper } from '@popperjs/core';
+	import { afterUpdate, onDestroy } from 'svelte';
     export let isVisible;
     export let referenceElement;
     let popperElement;
@@ -9,17 +9,25 @@
     let previousReference = null;
     $: popperOptions = {
         modifiers: [
-        { name: "offset", options: { offset: [20, 20] } },
+        { name: "offset", options: { offset: [30, -25] } },
         { name: "hide", enabled: true },
         { name: "flip", options: { fallbackPlacements: ['left', 'bottom'] } },
         ],
         placement: "right",
     };
 
+    $: {
+        if (!!popperElement) {
+            console.log(popperElement);
+            popperElement.addEventListener("click", (event) => {console.log(event)});
+            console.log("created listener");
+        }
+    }
+
 	afterUpdate(() => {
         if (referenceElement != previousReference) {
             if (!!popperInstance) {
-                // Destroy exisitng element if it exists
+                // Destroy element if it exists
                 popperInstance.destroy();
                 popperInstance = null;
             }
@@ -30,9 +38,16 @@
         }
 	});
 
+    onDestroy(() => {
+        if (!!popperInstance) {
+                popperInstance.destroy();
+            } 
+    });
+
+    
+
 </script>
-  
-<Portal target=".app-container">
+
     <div
         class="popper"
         class:visible={!!referenceElement && isVisible}
@@ -40,14 +55,12 @@
     >
         <slot />
     </div>
-</Portal>
 
   
 <style>
 .popper {
     transition: opacity 0.1s ease-in;
     opacity: 0;
-    pointer-events: none;
     position: absolute;
     z-index: var(--layer-popover);
 }

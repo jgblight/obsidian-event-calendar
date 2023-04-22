@@ -29,7 +29,7 @@
 <ul class={indent ? "" : "indent"}>
   {#each sources as source}
     {#each source.get_day(day) as item}
-        <li on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}><Bullet color={source.color} size={small ? 12 : 16}/> {item.text}</li>
+        <li><Bullet color={source.color} size={small ? 12 : 16}/> <span  on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>{item.text}</span></li>
     {/each}
   {/each}
 </ul>
