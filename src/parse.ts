@@ -1,5 +1,7 @@
 import { DataSource, DateItem } from "./types";
 import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
+import { Component } from "obsidian";
+import type { CalendarSettings } from "./settings";
 
 const red = "#e67e80";
 const orange = "#e69875";
@@ -10,6 +12,18 @@ const blue = "#7fbbb3";
 const purple = "#d699b6";
 
 const colors = [blue, red, yellow, aqua, purple, orange, green];
+
+export class QueryRunner extends Component {
+	constructor(private settings: CalendarSettings) {
+		super();
+	}
+
+	async runQuery(sourceStr: string, callbackFn: (x: DataSource[]) => void) {
+		return parse(sourceStr, this.settings.removeRegex).then((result) =>
+			callbackFn(result)
+		);
+	}
+}
 
 export async function parse(
 	source: string,

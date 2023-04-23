@@ -50,13 +50,7 @@ export class DataSource {
 }
 
 export class DataSourceCollection {
-	public sources: DataSource[];
-	private app: App;
-
-	constructor(sources: DataSource[], app: App) {
-		this.sources = sources;
-		this.app = app;
-	}
+	constructor(public sources: DataSource[], private app: App) {}
 
 	dayHasData(day: DateTime): boolean {
 		return this.sources.some((s) => s.get_day(day).length >= 1);

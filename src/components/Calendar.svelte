@@ -5,7 +5,7 @@
     import Arrow from "./Arrow.svelte";
 	  import HoverBox from "./HoverBox.svelte";
     import type { DataSourceCollection, DateElement } from "../types";
-    import { get_month_grid } from "../date_utils";
+    import { getMonthGrid } from "../date_utils";
 
     export let collection: DataSourceCollection;
     export let today: DateTime;
@@ -99,7 +99,7 @@
       </tr>
     </thead>
     <tbody>
-      {#each get_month_grid(year, month) as week (week.week_no)}
+      {#each getMonthGrid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
             <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={exitDay}/>

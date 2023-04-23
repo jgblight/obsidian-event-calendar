@@ -6,7 +6,7 @@ type Week = {
 };
 type MonthGrid = Week[];
 
-export function get_month_grid(year: number, month: number): MonthGrid {
+export function getMonthGrid(year: number, month: number): MonthGrid {
 	const firstDayOfMonth = DateTime.local(year, month, 1);
 	const month_grid = [];
 	let week = {

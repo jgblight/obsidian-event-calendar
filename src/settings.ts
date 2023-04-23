@@ -1,6 +1,10 @@
 import type EventCalendar from "./main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 
+export interface CalendarSettings {
+	removeRegex: string[];
+}
+
 export class CalendarSettingTab extends PluginSettingTab {
 	plugin: EventCalendar;
 
