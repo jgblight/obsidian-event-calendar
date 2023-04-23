@@ -2,8 +2,6 @@
 import ItemList from "./ItemList.svelte";
 import Popover from "./Popover.svelte";
 import type { DataSourceCollection, DateElement } from "../types";
-import type { DateTime } from "luxon";
-	import { element } from "svelte/internal";
 
 export let activeDateElement : DateElement|null;
 export let visible : boolean;

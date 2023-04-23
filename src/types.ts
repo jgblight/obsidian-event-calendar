@@ -2,6 +2,32 @@ import type { DateTime } from "luxon";
 import type { App } from "obsidian";
 import type { Link } from "obsidian-dataview";
 import { getDaysUntil } from "./date_utils";
+import type {
+	DataviewApi,
+	QueryResult,
+} from "obsidian-dataview/lib/api/plugin-api";
+import type { CalendarSettings } from "./settings";
+import { parse_query_result } from "./parse";
+import { Mutex } from "async-mutex";
+
+export class QueryRunner {
+	constructor(
+		private dataview: DataviewApi,
+		private settings: CalendarSettings,
+		private queryStr: string
+	) {}
+
+	async runQuery(): Promise<DateItem[]> {
+		return this.dataview
+			.tryQuery(this.queryStr)
+			.then((query_result: QueryResult) => {
+				return parse_query_result(
+					query_result,
+					this.settings.removeRegex
+				);
+			});
+	}
+}
 
 export class DateItem {
 	constructor(
@@ -17,24 +43,34 @@ export class DateItem {
 }
 
 export class DataSource {
-	public color: string;
-	public dateMap: Map<string, DateItem[]>;
+	private dateMap: Map<string, DateItem[]>;
+	private cacheIsLoaded: boolean;
+	private mutex: Mutex;
 
-	constructor(data: DateItem[], color: string) {
-		this.color = color;
+	constructor(public queryRunner: QueryRunner, public color: string) {
 		this.dateMap = new Map();
-		for (const item of data) {
-			if (item.until) {
-				getDaysUntil(item.date, item.until).forEach((d) =>
-					this.push_item(d, item)
-				);
-			} else {
-				this.push_item(item.date, item);
-			}
+		this.cacheIsLoaded = false;
+		this.mutex = new Mutex();
+	}
+
+	private async updateCache() {
+		if (!this.cacheIsLoaded) {
+			await this.queryRunner.runQuery().then((items) => {
+				for (const item of items) {
+					if (item.until) {
+						getDaysUntil(item.date, item.until).forEach((d) =>
+							this.push_item(d, item)
+						);
+					} else {
+						this.push_item(item.date, item);
+					}
+				}
+			});
+			this.cacheIsLoaded = true;
 		}
 	}
 
-	push_item(date: DateTime, item: DateItem) {
+	private push_item(date: DateTime, item: DateItem) {
 		const dayStr = date.toFormat("DDD");
 		if (!this.dateMap.has(dayStr)) {
 			this.dateMap.set(dayStr, [item]);
@@ -43,17 +79,22 @@ export class DataSource {
 		}
 	}
 
-	get_day(day: DateTime): DateItem[] {
-		const formatted = day.toFormat("DDD");
-		return this.dateMap.get(formatted) ?? [];
+	async get_day(day: DateTime): Promise<DateItem[]> {
+		return this.mutex.runExclusive(this.updateCache.bind(this)).then(() => {
+			const formatted = day.toFormat("DDD");
+			return this.dateMap.get(formatted) ?? [];
+		});
 	}
 }
 
 export class DataSourceCollection {
 	constructor(public sources: DataSource[], private app: App) {}
 
-	dayHasData(day: DateTime): boolean {
-		return this.sources.some((s) => s.get_day(day).length >= 1);
+	async dayHasData(day: DateTime): Promise<boolean> {
+		// TODO: return first true
+		return Promise.all(this.sources.map((s) => s.get_day(day))).then(
+			(results) => results.some((items) => items.length > 0)
+		);
 	}
 
 	hoverItem(item: DateItem, element: HTMLElement) {

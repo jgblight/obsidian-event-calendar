@@ -10,7 +10,11 @@
     let referenceElement : HTMLElement;
 
     let has_data : boolean = false;
-    $: has_data = !!day && collection.dayHasData(day)
+    $: {
+      if (day) {
+        collection.dayHasData(day).then((x) => {has_data = x})
+      }
+    } 
 
     const dispatch = createEventDispatcher();
 

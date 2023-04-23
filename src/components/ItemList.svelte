@@ -20,15 +20,19 @@
 
 <ul class={indent ? "" : "indent"}>
   {#each collection.sources as source}
-    {#each source.get_day(day) as item}
-        <li>
-          <Bullet color={source.color} size={small ? 12 : 16} /> 
-          {item.text} 
-          {#if !small}
-            <span class="link" on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>({item.displayText()})</span>
-          {/if}
-        </li>
-    {/each}
+    {#await source.get_day(day)}
+      <div/>
+    {:then items} 
+      {#each items as item}
+          <li>
+            <Bullet color={source.color} size={small ? 12 : 16} /> 
+            {item.text} 
+            {#if !small}
+              <span class="link" on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>({item.displayText()})</span>
+            {/if}
+          </li>
+      {/each}
+    {/await}
   {/each}
 </ul>
 

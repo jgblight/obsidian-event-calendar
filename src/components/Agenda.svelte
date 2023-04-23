@@ -7,15 +7,21 @@
     export let collection: DataSourceCollection;
     export let today: DateTime;
 
-    let days = getNextNDays(today, 7).filter((d) => collection.dayHasData(d));
+    let days = getNextNDays(today, 7)
 </script>
 
 <div class="agenda">
     {#each days as day}
-        <div>
-            <h5>{day.toLocaleString({ weekday: 'long', month: 'long', day: '2-digit' })}</h5>
-            <ItemList collection={collection} day={day} indent={true}/>
-        </div>
+        {#await collection.dayHasData(day)}
+            <div/>
+        {:then has_data} 
+            {#if has_data}
+                <div>
+                    <h5>{day.toLocaleString({ weekday: 'long', month: 'long', day: '2-digit' })}</h5>
+                    <ItemList collection={collection} day={day} indent={true}/>
+                </div>
+            {/if}
+        {/await}
     {/each}
 </div>
 

@@ -1,7 +1,7 @@
-import { DataSource, DateItem } from "./types";
 import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
-import { Component } from "obsidian";
 import type { CalendarSettings } from "./settings";
+import { DataSource, DateItem } from "./types";
+import { QueryRunner } from "./types";
 
 const red = "#e67e80";
 const orange = "#e69875";
@@ -13,42 +13,25 @@ const purple = "#d699b6";
 
 const colors = [blue, red, yellow, aqua, purple, orange, green];
 
-export class QueryRunner extends Component {
-	constructor(private settings: CalendarSettings) {
-		super();
-	}
-
-	async runQuery(sourceStr: string, callbackFn: (x: DataSource[]) => void) {
-		return parse(sourceStr, this.settings.removeRegex).then((result) =>
-			callbackFn(result)
-		);
-	}
-}
-
-export async function parse(
+export function parseDataSources(
 	source: string,
-	removeRegex: string[]
-): Promise<DataSource[]> {
-	const results: Promise<DataSource>[] = [];
+	settings: CalendarSettings
+): DataSource[] {
+	const dv = this.app.plugins.plugins.dataview?.api;
+	const results: DataSource[] = [];
 	const queries = source.split("---");
 	for (let i = 0; i < queries.length; i++) {
-		const query = queries[i];
-		const dv = this.app.plugins.plugins.dataview?.api;
-		const data_source = dv
-			?.tryQuery(query)
-			.then((query_result: QueryResult) => {
-				return parse_query_result(query_result, colors[i], removeRegex);
-			});
-		results.push(data_source);
+		results.push(
+			new DataSource(new QueryRunner(dv, settings, queries[i]), colors[i])
+		);
 	}
-	return Promise.all(results);
+	return results;
 }
 
 export function parse_query_result(
 	query: QueryResult,
-	color: string,
 	removeRegex: string[]
-): DataSource {
+): DateItem[] {
 	if (query.type != "table") {
 		throw new Error("Queries must be of type TABLE");
 	}
@@ -79,7 +62,7 @@ export function parse_query_result(
 					item.until
 				)
 		);
-	return new DataSource(data, color);
+	return data;
 }
 
 function stripRegex(text: string, removeRegex: string[]): string {
