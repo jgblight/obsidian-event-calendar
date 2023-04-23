@@ -2,6 +2,7 @@
     import { createPopper } from '@popperjs/core';
 	import { afterUpdate, onDestroy } from 'svelte';
     import { createEventDispatcher } from 'svelte';
+	import Portal from 'svelte-portal';
 
     export let isVisible;
     export let referenceElement;
@@ -45,7 +46,7 @@
     
 
 </script>
-
+<Portal target=".app-container">
     <div
         class="popper"
         class:visible={isVisible}
@@ -54,6 +55,7 @@
     >
         <slot />
     </div>
+</Portal>
 
   
 <style>

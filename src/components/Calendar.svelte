@@ -35,15 +35,16 @@
     let popoverVisible : boolean = false;
     let popoverTimeout : number;
     let pointerInPopover : boolean = false;
+    let pointerInActiveDate : boolean = false;
 
     function hoverDay(event : CustomEvent) {
-      console.log({event: "enter", day: event.detail});
       // Track the day that the user is currently hovering over
       // If same day is hover for more than the timeout period, open the popover
       const eventElement = event.detail;
 
       if (eventElement !== activeDateElement) {
         activeDateElement = eventElement;
+        pointerInActiveDate = true;
       }
 
       if (!popoverVisible) {
@@ -52,17 +53,14 @@
           if (activeDateElement === eventElement) {
             popoverVisible = true;
           }
-          console.log({event: "enter", activeDateElement, popoverVisible, });
         }, 250);
       }
-      console.log({event: "enter", activeDateElement, popoverVisible, });
 	  }
 
     const dismissPopover = debounce(
       (dateElement: DateElement) => {
-        console.log({event: "exit", day: dateElement});
         // if the user didn't hover onto another day
-        if (activeDateElement === dateElement && !pointerInPopover) {
+        if (activeDateElement && activeDateElement.element === dateElement.element && !pointerInPopover && !pointerInActiveDate) {
           activeDateElement = null;
           popoverVisible = false;
         }
@@ -74,6 +72,11 @@
     function exitPopover() {
       pointerInPopover = false;
       if (activeDateElement) { dismissPopover(activeDateElement)}
+    }
+
+    function exitDay(event: CustomEvent) {
+      pointerInActiveDate = false;
+      if (activeDateElement) { dismissPopover(event.detail)}
     }
 
 </script>
@@ -99,7 +102,7 @@
       {#each get_month_grid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={(event) => dismissPopover(event.detail)}/>
+            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={exitDay}/>
           {/each} 
         </tr>
       {/each}
