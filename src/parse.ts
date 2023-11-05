@@ -2,6 +2,7 @@ import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
 import type { CalendarSettings } from "./settings";
 import { DataSource, DateItem } from "./types";
 import { QueryRunner } from "./types";
+import { DateTime } from "luxon";
 
 const red = "#e67e80";
 const orange = "#e69875";
@@ -52,7 +53,7 @@ export function parse_query_result(
 			item_dict["file"] = file_link;
 			return item_dict;
 		})
-		.filter((item) => item.date != undefined)
+		.filter((item) => DateTime.isDateTime(item.date))
 		.map(
 			(item) =>
 				new DateItem(
