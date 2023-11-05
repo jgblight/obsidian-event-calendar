@@ -102,7 +102,7 @@
       {#each getMonthGrid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} on:hoverDay={hoverDay} on:endHover={exitDay}/>
+            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} is_today={week.days.has(d) ? today.hasSame(week.days.get(d), "day") : false} on:hoverDay={hoverDay} on:endHover={exitDay}/>
           {/each} 
         </tr>
       {/each}

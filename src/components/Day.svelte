@@ -6,6 +6,7 @@
 
     export let day: DateTime|null;
     export let collection: DataSourceCollection;
+    export let is_today: boolean;
 
     let referenceElement : HTMLElement;
 
@@ -37,7 +38,7 @@
     }
 </script>
 
-<td class="day">
+<td class={is_today ? "day today" : "day" }>
 {#if day}
     <div on:pointerenter={hoverDay} on:focus={hoverDay} on:pointerleave={endHover} bind:this={referenceElement} class="content">
         <div class="day_number">{day.day}</div>
@@ -67,5 +68,8 @@
     color: var(--text-muted);
     text-align: right;
     vertical-align: top;
+  }
+  .today {
+    background-color: color-mix(in srgb, var(--interactive-accent) 30%, transparent) !important;
   }
 </style>
