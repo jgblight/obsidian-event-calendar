@@ -1,7 +1,5 @@
 import type { QueryResult } from "obsidian-dataview/lib/api/plugin-api";
-import type { CalendarSettings } from "./settings";
 import { DataSource, DateItem } from "./types";
-import { QueryRunner } from "./types";
 import { DateTime } from "luxon";
 
 const red = "#e67e80";
@@ -14,17 +12,11 @@ const purple = "#d699b6";
 
 const colors = [blue, red, yellow, aqua, purple, orange, green];
 
-export function parseDataSources(
-	source: string,
-	settings: CalendarSettings
-): DataSource[] {
-	const dv = this.app.plugins.plugins.dataview?.api;
+export function parseDataSources(source: string): DataSource[] {
 	const results: DataSource[] = [];
 	const queries = source.split("---");
 	for (let i = 0; i < queries.length; i++) {
-		results.push(
-			new DataSource(new QueryRunner(dv, settings, queries[i]), colors[i])
-		);
+		results.push(new DataSource(queries[i], colors[i]));
 	}
 	return results;
 }

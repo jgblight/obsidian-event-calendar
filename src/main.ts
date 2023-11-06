@@ -47,7 +47,6 @@ export default class EventCalendar extends Plugin {
 		agenda.sortOrder = -100;
 
 		window.setInterval(() => {
-			console.log("triggered event");
 			this.app.workspace.trigger("calendar-update");
 		}, 10000);
 	}
