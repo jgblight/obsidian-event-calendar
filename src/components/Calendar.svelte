@@ -9,26 +9,10 @@
 
     export let collection: DataSourceCollection;
     export let today: DateTime;
-
-    // Track currently visible month
-    let year = today.year;
-    let month = today.month;
-
-    function prev_month() {
-      month = month - 1;
-      if (month == 0) {
-        year = year - 1;
-        month = 12;
-      }
-    }
-
-    function next_month() {
-      month = month + 1;
-      if (month == 13) {
-        year = year + 1;
-        month = 1;
-      }
-    }
+    export let year: number;
+    export let month: number;
+    export let prev_month_callback: () => void;
+    export let next_month_callback: () => void;
 
     // Track popover state
     let activeDateElement : DateElement|null = null;
@@ -86,9 +70,9 @@
     <span class="year">{year}</span>
   </div>
   <div class="heading">
-    <button on:click={prev_month}><Arrow direction="left"/></button>
+    <button on:click={prev_month_callback}><Arrow direction="left"/></button>
     <span class="month">{Info.months()[month-1]}</span>
-    <button on:click={next_month}><Arrow direction="right"/></button>
+    <button on:click={next_month_callback}><Arrow direction="right"/></button>
   </div>
   <table class="calendar">
     <thead>

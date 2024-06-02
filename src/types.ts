@@ -9,8 +9,6 @@ import type {
 import type { CalendarSettings } from "./settings";
 import { parse_query_result } from "./parse";
 
-import { Mutex } from "async-mutex";
-
 export class DateItem {
 	constructor(
 		public date: DateTime,
@@ -32,8 +30,7 @@ export class DataSource {
 	}
 
 	async update(dataview: DataviewApi, settings: CalendarSettings) {
-		console.log("updating query");
-		await dataview
+		return dataview
 			.tryQuery(this.queryStr)
 			.then((query_result: QueryResult) => {
 				return parse_query_result(query_result, settings.removeRegex);
@@ -69,7 +66,6 @@ export class DataSource {
 
 export class DataSourceCollection {
 	public lastLoad: number;
-	private mutex: Mutex;
 
 	constructor(
 		public sources: DataSource[],
@@ -78,23 +74,15 @@ export class DataSourceCollection {
 		private settings: CalendarSettings
 	) {
 		this.lastLoad = 0;
-		this.mutex = new Mutex();
 	}
 
-	private async _updateCache() {
+	public async updateCache(callback: () => void) {
 		if (this.lastLoad != this.dataview.index.revision) {
-			console.log("update cache");
-			await Promise.all(
-				this.sources.map((s) => {
-					s.update(this.dataview, this.settings);
-				})
-			);
+			this.sources.map((s) => 
+				s.update(this.dataview, this.settings).then(callback)
+			)
 			this.lastLoad = this.dataview.index.revision;
 		}
-	}
-
-	public async updateCache() {
-		return this.mutex.runExclusive(this._updateCache.bind(this));
 	}
 
 	async dayHasData(day: DateTime): Promise<boolean> {

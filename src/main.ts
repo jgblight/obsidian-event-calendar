@@ -1,7 +1,7 @@
 import { Plugin } from "obsidian";
 import type { CalendarSettings } from "./settings";
 import { CalendarSettingTab } from "./settings";
-import { CalendarRenderChild, RenderType } from "./render";
+import { CalendarRenderChild } from "./render";
 
 const DEFAULT_SETTINGS: Partial<CalendarSettings> = {
 	removeRegex: [],
@@ -23,32 +23,11 @@ export default class EventCalendar extends Plugin {
 						app,
 						source,
 						this.settings,
-						RenderType.Calendar
 					)
 				);
 			}
 		);
 		calendar.sortOrder = -100;
-
-		const agenda = this.registerMarkdownCodeBlockProcessor(
-			"agenda",
-			async (source, el, ctx) => {
-				ctx.addChild(
-					new CalendarRenderChild(
-						el,
-						app,
-						source,
-						this.settings,
-						RenderType.Agenda
-					)
-				);
-			}
-		);
-		agenda.sortOrder = -100;
-
-		window.setInterval(() => {
-			this.app.workspace.trigger("calendar-update");
-		}, 10000);
 	}
 
 	async loadSettings() {

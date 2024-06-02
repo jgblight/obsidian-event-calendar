@@ -57,6 +57,7 @@
     vertical-align: top;
     height: 100px;
     text-overflow: ellipsis;
+    white-space: normal;
   }
   .content {
     height: 100%;
