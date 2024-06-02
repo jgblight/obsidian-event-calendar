@@ -69,6 +69,7 @@
     color: var(--text-muted);
     text-align: right;
     vertical-align: top;
+    margin-bottom: 5px;
   }
   .today {
     background-color: color-mix(in srgb, var(--interactive-accent) 30%, transparent) !important;

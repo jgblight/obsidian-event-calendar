@@ -1,4 +1,5 @@
 <script lang="ts">
+import { DateTime } from "luxon";
 import ItemList from "./ItemList.svelte";
 import Popover from "./Popover.svelte";
 import type { DataSourceCollection, DateElement } from "../types";
@@ -15,6 +16,7 @@ on:enterPopover on:exitPopover
 >
 <div class="popover">
   {#if activeDateElement}
+    <h5>{activeDateElement.date.toLocaleString(DateTime.DATE_FULL)}</h5>
     <ItemList collection={collection} day={activeDateElement.date} />
   {/if}
 </div>
@@ -30,5 +32,8 @@ on:enterPopover on:exitPopover
     display: flex;
     flex-direction: column;
     padding: 24px;
+  }
+  .popover > h5 {
+    margin: 0px;
   }
 </style>
