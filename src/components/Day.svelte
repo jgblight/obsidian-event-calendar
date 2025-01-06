@@ -1,19 +1,20 @@
 <script lang="ts">
     import type { DateTime } from "luxon";
     import ItemList from "./ItemList.svelte";
-    import type { DataSourceCollection } from "../types";
+    import type { CalendarState } from "../state";
     import { createEventDispatcher } from 'svelte';
 
-    export let day: DateTime|null;
-    export let collection: DataSourceCollection;
-    export let is_today: boolean;
+    export let day: DateTime|null|undefined;
+    export let state: CalendarState;
+    export let today: DateTime;
 
+    let is_today = day && today.hasSame(day, "day");
     let referenceElement : HTMLElement;
 
     let has_data : boolean = false;
     $: {
       if (day) {
-        collection.dayHasData(day).then((x) => {has_data = x})
+        state.dayHasData(day).then((x) => {has_data = x})
       }
     } 
 
@@ -42,7 +43,7 @@
 {#if day}
     <div on:pointerenter={hoverDay} on:focus={hoverDay} on:pointerleave={endHover} bind:this={referenceElement} class="content">
         <div class="day_number">{day.day}</div>
-        <ItemList collection={collection} day={day} small={true}/>
+        <ItemList state={state} day={day} small={true}/>
     </div>
 {/if}
 </td>

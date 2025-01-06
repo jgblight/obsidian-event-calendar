@@ -6,14 +6,18 @@ type Week = {
 };
 type MonthGrid = Week[];
 
+export function firstDayOfMonth(year: number, month: number): DateTime {
+	return DateTime.local(year, month, 1);
+}
+
 export function getMonthGrid(year: number, month: number): MonthGrid {
-	const firstDayOfMonth = DateTime.local(year, month, 1);
+	const firstDay = firstDayOfMonth(year, month);
 	const month_grid = [];
 	let week = {
-		week_no: firstDayOfMonth.weekNumber,
+		week_no: firstDay.weekNumber,
 		days: new Map(),
 	};
-	const daysInMonth = firstDayOfMonth.daysInMonth;
+	const daysInMonth = firstDay.daysInMonth;
 	if (daysInMonth === undefined) {
 		throw new Error("Invalid month");
 	}
@@ -39,7 +43,7 @@ export function getNextNDays(startDate: DateTime, numDays: number): DateTime[] {
 	return days;
 }
 
-export function getDaysUntil(
+export function getDaysInRange(
 	startDate: DateTime,
 	endDate: DateTime
 ): DateTime[] {

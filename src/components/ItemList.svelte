@@ -1,39 +1,38 @@
 <script lang="ts">
   import type { DateTime } from "luxon";
   import Bullet from "./Bullet.svelte";
-  import type { DataSourceCollection, DateItem } from "../types";
+  import type { DateItem } from "../query";
+  import type { CalendarState } from "../state";
 
-  export let collection: DataSourceCollection;
+  export let state: CalendarState;
   export let day: DateTime;
   export let indent : boolean = false;
   export let small : boolean = false;
 
   function onClick(item: DateItem) {
-    collection.clickItem(item);
+    state.clickItem(item);
   }
 
   function onHover(item: DateItem, element: HTMLElement) {
-    collection.hoverItem(item, element);
+    state.hoverItem(item, element);
   }
 
 </script>
 
 <ul class={indent ? "" : "indent"}>
-  {#each collection.sources as source}
-    {#await source.get_day(day)}
-      <div/>
-    {:then items} 
-      {#each items as item}
-          <li>
-            <Bullet color={source.color} size={small ? 12 : 16} /> 
-            {item.text} 
-            {#if !small}
-              <span class="link" on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>({item.displayText()})</span>
-            {/if}
-          </li>
-      {/each}
-    {/await}
-  {/each}
+  {#await state.getDay(day)}
+    <div/>
+  {:then items} 
+    {#each items as item}
+        <li>
+          <Bullet color={item.color} size={small ? 12 : 16} /> 
+          {item.text} 
+          {#if !small}
+            <span class="link" on:click={() => onClick(item)} on:pointerenter={(event) => onHover(item, event.currentTarget)}>({item.displayText()})</span>
+          {/if}
+        </li>
+    {/each}
+  {/await}
 </ul>
 
 <style>

@@ -4,15 +4,17 @@
     import Day from "./Day.svelte";
     import Arrow from "./Arrow.svelte";
 	  import HoverBox from "./HoverBox.svelte";
-    import type { DataSourceCollection, DateElement } from "../types";
+    import type { CalendarState, DateElement } from "../state";
     import { getMonthGrid } from "../date_utils";
 
-    export let collection: DataSourceCollection;
+    export let state: CalendarState;
     export let today: DateTime;
-    export let year: number;
-    export let month: number;
     export let prev_month_callback: () => void;
     export let next_month_callback: () => void;
+
+
+    let year = state.year;
+    let month = state.month;
 
     // Track popover state
     let activeDateElement : DateElement|null = null;
@@ -86,14 +88,14 @@
       {#each getMonthGrid(year, month) as week (week.week_no)}
         <tr>
           {#each Info.weekdays('short') as d}
-            <Day day={week.days.has(d) ? week.days.get(d) : null} collection={collection} is_today={week.days.has(d) ? today.hasSame(week.days.get(d), "day") : false} on:hoverDay={hoverDay} on:endHover={exitDay}/>
+            <Day day={week.days.has(d) ? week.days.get(d) : null} state={state} today={today} on:hoverDay={hoverDay} on:endHover={exitDay}/>
           {/each} 
         </tr>
       {/each}
     </tbody>
   </table>
 </div>
-<HoverBox collection={collection} activeDateElement={activeDateElement} visible={popoverVisible} on:enterPopover={() => {pointerInPopover = true}} on:exitPopover={exitPopover}/>
+<HoverBox state={state} activeDateElement={activeDateElement} visible={popoverVisible} on:enterPopover={() => {pointerInPopover = true}} on:exitPopover={exitPopover}/>
 
 
 <style>
